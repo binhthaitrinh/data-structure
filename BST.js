@@ -10,6 +10,13 @@ Applications of trees:
 
 Why BST is used:
     - make it easy to look things up, insert things
+
+BFS: visit each level before reaching the root
+DFS: visit the root first, then come back (InOrder, PreOrder, PostOrder)
+
+BFS vs DFS
+- DFS uses less space when we have a wide tree
+- 
 */
 
 class Node {
@@ -75,20 +82,20 @@ class BST {
     }
   }
 
-  inOrder() {
-    this.inOrderHelper(this.root, 0);
+  print() {
+    this.printHelper(this.root, 0);
   }
 
-  inOrderHelper(currentNode, indentation) {
+  printHelper(currentNode, indentation) {
     if (currentNode.left) {
-      this.inOrderHelper(currentNode.left, indentation + 1);
+      this.printHelper(currentNode.left, indentation + 1);
     }
     for (let i = 0; i < indentation; i++) {
       process.stdout.write("- ");
     }
     console.log(currentNode.value);
     if (currentNode.right) {
-      this.inOrderHelper(currentNode.right, indentation + 1);
+      this.printHelper(currentNode.right, indentation + 1);
     }
   }
 
@@ -130,6 +137,90 @@ class BST {
       return null;
     }
   }
+
+  bfs() {
+    const queue = [];
+    const result = [];
+    let node = this.root;
+    queue.push(node);
+    while (queue.length !== 0) {
+      node = queue.shift();
+      result.push(node.value);
+      if (node.left) {
+        queue.push(node.left);
+      }
+      if (node.right) {
+        queue.push(node.right);
+      }
+    }
+    return result;
+  }
+
+  inOrder() {
+    const result = [];
+
+    function inOrderHelper(currentNode) {
+      if (currentNode.left) {
+        inOrderHelper(currentNode.left);
+      }
+      result.push(currentNode.value);
+      if (currentNode.right) {
+        inOrderHelper(currentNode.right);
+      }
+    }
+
+    inOrderHelper(this.root);
+    return result;
+  }
+
+  preOrder() {
+    const result = [];
+
+    function preOrderHelper(currentNode) {
+      result.push(currentNode.value);
+      if (currentNode.left) {
+        preOrderHelper(currentNode.left);
+      }
+      if (currentNode.right) {
+        preOrderHelper(currentNode.right);
+      }
+    }
+    preOrderHelper(this.root);
+    return result;
+  }
+
+  postOrder() {
+    const result = [];
+    const stack = [];
+    stack.unshift(this.root);
+    while (stack.length !== 0) {
+      const current = stack.shift();
+      result.unshift(current.value);
+      if (current.left) {
+        stack.unshift(current.left);
+      }
+      if (current.right) {
+        stack.unshift(current.right);
+      }
+    }
+    return result;
+  }
+
+  postOrderRecursive() {
+    const result = [];
+
+    function postOrderHelper(currentNode) {
+      if (currentNode.left) {
+        postOrderHelper(currentNode.left);
+      }
+      if (currentNode.right) {
+        postOrderHelper(currentNode.right);
+      }
+      result.push(currentNode.value);
+    }
+    postOrderHelper(this.root);
+    return result;
+  }
 }
 
 const bst = new BST();
@@ -142,4 +233,9 @@ bst.insert(6);
 bst.insert(8);
 console.log(bst.find(4));
 console.log(bst.iterativeFind(5));
-bst.inOrder();
+bst.print();
+console.log(bst.bfs());
+console.log(bst.inOrder());
+console.log(bst.preOrder());
+console.log(bst.postOrder());
+console.log(bst.postOrderRecursive());
